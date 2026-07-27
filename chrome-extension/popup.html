@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TruthLens</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 380px;
+      background: #fafbfc;
+      color: #1a1a2e;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-icon svg {
+      width: 16px;
+      height: 16px;
+      color: white;
+    }
+
+    .header-text h1 {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      letter-spacing: -0.2px;
+    }
+
+    .header-text p {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 1px;
+    }
+
+    /* Status indicator */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 20px;
+      background: #f0f4f8;
+      border-bottom: 1px solid #e8ecf1;
+      font-size: 11px;
+      color: #5f6368;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #34c759;
+      flex-shrink: 0;
+    }
+
+    .status-dot.offline {
+      background: #ff3b30;
+    }
+
+    /* Main content */
+    .content {
+      padding: 16px 20px;
+    }
+
+    .input-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #5f6368;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      height: 88px;
+      padding: 10px 12px;
+      border: 1.5px solid #dde1e6;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #1a1a2e;
+      background: white;
+      resize: vertical;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea::placeholder {
+      color: #adb5bd;
+      font-size: 12px;
+    }
+
+    /* Button */
+    .verify-btn {
+      width: 100%;
+      padding: 10px 16px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      letter-spacing: 0.1px;
+    }
+
+    .verify-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+    }
+
+    .verify-btn:active {
+      transform: translateY(0);
+    }
+
+    .verify-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .verify-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Loader */
+    .loader {
+      display: none;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .loader-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2.5px solid #e8ecf1;
+      border-top: 2.5px solid #667eea;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      font-size: 12px;
+      color: #5f6368;
+    }
+
+    /* Result card */
+    #result {
+      display: none;
+      margin-top: 14px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e8ecf1;
+      background: white;
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+
+    .result-header.accurate {
+      background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    }
+
+    .result-header.uncertain {
+      background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    }
+
+    .result-header.hallucination {
+      background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    }
+
+    .verdict-text {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .result-header.accurate .verdict-text { color: #155724; }
+    .result-header.uncertain .verdict-text { color: #856404; }
+    .result-header.hallucination .verdict-text { color: #721c24; }
+
+    .score-badge {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .score-badge.high { background: linear-gradient(135deg, #28a745, #20c997); }
+    .score-badge.mid { background: linear-gradient(135deg, #ffc107, #ff9800); }
+    .score-badge.low { background: linear-gradient(135deg, #dc3545, #c82333); }
+
+    .result-body {
+      padding: 12px 16px;
+    }
+
+    .result-explanation {
+      font-size: 12px;
+      color: #495057;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .result-sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding-top: 10px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .result-sources-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #adb5bd;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 100%;
+      margin-bottom: 2px;
+    }
+
+    .source-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #f1f3f5;
+      border-radius: 10px;
+      color: #5f6368;
+      border: 1px solid #e8ecf1;
+    }
+
+    /* Error state */
+    .error-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: #fff5f5;
+      border: 1px solid #fed7d7;
+      font-size: 12px;
+      color: #c53030;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 10px 20px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer-link {
+      font-size: 11px;
+      color: #adb5bd;
+      text-decoration: none;
+      transition: color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .footer-link:hover {
+      color: #667eea;
+    }
+
+    .footer-link-primary {
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .footer-link-primary:hover {
+      color: #764ba2;
+    }
+
+    .footer-sep {
+      color: #dde1e6;
+      font-size: 10px;
+    }
+
+    /* ── Login Screen ───────────────────────────────────── */
+    .login-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .login-screen.active {
+      display: flex;
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    .login-logo svg {
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+
+    .login-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1a1a2e;
+      letter-spacing: -0.4px;
+    }
+
+    .login-subtitle {
+      font-size: 13px;
+      color: #5f6368;
+      line-height: 1.5;
+      max-width: 280px;
+    }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: white;
+      border: 1.5px solid #dde1e6;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: #3c4043;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 100%;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    .google-btn:hover {
+      background: #f8f9fa;
+      border-color: #c5c8cc;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      transform: translateY(-1px);
+    }
+
+    .google-btn:active {
+      transform: translateY(0);
+    }
+
+    .google-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .google-btn svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ── User info bar ─────────────────────────────────────── */
+    .user-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 20px;
+      background: #f0f4f8;
+      border-bottom: 1px solid #e8ecf1;
+      font-size: 11px;
+      color: #5f6368;
+    }
+
+    .user-bar.active {
+      display: flex;
+    }
+
+    .user-email {
+      font-weight: 500;
+      color: #1a1a2e;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: 11px;
+      color: #dc3545;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #fff5f5;
+    }
+
+    /* Per-claim breakdown */
+    .claims-section {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e8ecf1;
+    }
+
+    .claims-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: #5f6368;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .claim-card {
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      border-left: 3px solid;
+      background: #f8f9fa;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .claim-card.accurate {
+      border-left-color: #28a745;
+      background: #f6fef8;
+    }
+
+    .claim-card.uncertain {
+      border-left-color: #ffc107;
+      background: #fffdf5;
+    }
+
+    .claim-card.hallucination {
+      border-left-color: #dc3545;
+      background: #fff5f5;
+    }
+
+    .claim-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+
+    .claim-verdict {
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .claim-card.accurate .claim-verdict { color: #155724; }
+    .claim-card.uncertain .claim-verdict { color: #856404; }
+    .claim-card.hallucination .claim-verdict { color: #721c24; }
+
+    .claim-score {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .claim-score.high { background: linear-gradient(135deg, #28a745, #20c997); }
+    .claim-score.mid { background: linear-gradient(135deg, #ffc107, #ff9800); }
+    .claim-score.low { background: linear-gradient(135deg, #dc3545, #c82333); }
+
+    .claim-text {
+      font-size: 12px;
+      color: #495057;
+      line-height: 1.5;
+      margin-bottom: 2px;
+      font-style: italic;
+    }
+
+    .claim-explanation {
+      font-size: 11px;
+      color: #6c757d;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>TruthLens</h1>
+      <p>Verify AI-generated claims instantly</p>
+    </div>
+  </div>
+
+  <!-- Status bar (shown when logged in) -->
+  <div class="status-bar" id="status-bar">
+    <span class="status-dot" id="status-dot"></span>
+    <span id="status-text">Connecting to backend...</span>
+  </div>
+
+  <!-- User bar (logged-in state) -->
+  <div class="user-bar" id="user-bar">
+    <span class="user-email" id="user-email"></span>
+    <button class="logout-btn" id="logout-btn">Sign out</button>
+  </div>
+
+  <!-- Login Screen (shown when not authenticated) -->
+  <div class="login-screen" id="login-screen">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+    </div>
+    <div class="login-title">Sign in to TruthLens</div>
+    <div class="login-subtitle">Verify AI-generated claims against live sources. Sign in with your Google account to get started.</div>
+    <button class="google-btn" id="google-login-btn">
+      <!-- Google G logo -->
+      <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+      </svg>
+      Sign in with Google
+    </button>
+  </div>
+
+  <!-- Main Content (shown when logged in) -->
+  <div class="content" id="main-content" style="display:none;">
+    <label class="input-label" for="ai-text">Text to verify</label>
+    <textarea id="ai-text" placeholder="Select text on any page and open this popup, or paste text here..."></textarea>
+
+    <button class="verify-btn" id="verify-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+      Verify Claims
+    </button>
+
+    <!-- Loader -->
+    <div class="loader" id="loader">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Analyzing claims against multiple sources...</div>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- Result -->
+    <div id="result">
+      <div class="result-header" id="result-header">
+        <span class="verdict-text" id="verdict"></span>
+        <div class="score-badge" id="score-badge">
+          <span id="score"></span>
+        </div>
+      </div>
+      <div class="result-body">
+        <p class="result-explanation" id="explanation"></p>
+        <div class="result-sources">
+          <span class="result-sources-label">Sources</span>
+          <span id="sources"></span>
+        </div>
+      </div>
+      <div id="claims-breakdown"></div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <a href="http://localhost:8000/analytics" target="_blank" class="footer-link footer-link-primary">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      Analytics Dashboard
+    </a>
+    <span class="footer-sep">·</span>
+    <a href="http://localhost:8000/dashboard" target="_blank" class="footer-link">
+      Basic Dashboard
+    </a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

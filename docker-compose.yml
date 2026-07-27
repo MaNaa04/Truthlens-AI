@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # ── Redis Cache ─────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: ai-hallucination-redis
+    ports:
+      - "6379:6379"
+    # Append-only file (AOF) persistence: every write is fsynced to disk.
+    # Survives container restarts — cached API results are not lost.
+    command: redis-server --appendonly yes --appendfsync everysec
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────────
+  backend:
+    build: .
+    container_name: ai-hallucination-backend
+    ports:
+      - "8000:8000"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    env_file:
+      - .env
+    environment:
+      # Point the backend at the Redis container by service name
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    depends_on:
+      redis:
+        condition: service_healthy
+
+# ── Named Volumes ─────────────────────────────────────────────────────────────
+volumes:
+  redis_data:
+    driver: local

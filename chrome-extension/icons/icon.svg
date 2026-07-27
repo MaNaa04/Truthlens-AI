@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="60" fill="#4A90D9"/>
+
+  <!-- Magnifying glass -->
+  <circle cx="52" cy="52" r="24" fill="none" stroke="white" stroke-width="6"/>
+  <line x1="70" y1="70" x2="95" y2="95" stroke="white" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Check/X indicator -->
+  <circle cx="85" cy="95" r="18" fill="#28a745"/>
+  <path d="M77 95 L82 100 L93 89" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- AI text -->
+  <text x="52" y="58" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="white" text-anchor="middle">AI</text>
+</svg>
