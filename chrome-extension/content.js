@@ -13,7 +13,7 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-const HD_API_URL = "http://localhost:8000/api/verify";
+const HD_API_URL = "https://truthlens-ai-1fwt.onrender.com/api/verify";
 
 // Listen for messages from background script or popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {

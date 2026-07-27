@@ -11,7 +11,7 @@ function escapeHTML(str) {
   return div.innerHTML;
 }
 
-const API_URL = "http://localhost:8000/api/verify";
+const API_URL = "https://truthlens-ai-1fwt.onrender.com/api/verify";
 let isInjecting = false;
 
 // Create and manage right-side panel
@@ -668,7 +668,7 @@ async function verifyText(text, button) {
       <div class="hd-error">
         <div class="hd-error-icon">⚠️</div>
         <div class="hd-error-text">
-          Cannot connect to server. Make sure the backend is running at http://localhost:8000
+          Cannot connect to server. The server may be waking up — please wait 30 seconds and try again.
         </div>
       </div>
     `;
@@ -762,13 +762,13 @@ function showResultInPanel(data) {
         0-49: Low reliability
       </div>
 
-      <a href="http://localhost:8000/analytics" target="_blank" class="hd-dashboard-link">
+      <a href="https://truthlens-ai-1fwt.onrender.com/analytics" target="_blank" class="hd-dashboard-link">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
         Open Analytics Dashboard
       </a>
       <div class="hd-dashboard-links">
-        <a href="http://localhost:8000/dashboard" target="_blank" class="hd-dashboard-link-secondary">Basic Dashboard</a>
-        <a href="http://localhost:8000/docs" target="_blank" class="hd-dashboard-link-secondary">API Docs</a>
+        <a href="https://truthlens-ai-1fwt.onrender.com/dashboard" target="_blank" class="hd-dashboard-link-secondary">Basic Dashboard</a>
+        <a href="https://truthlens-ai-1fwt.onrender.com/docs" target="_blank" class="hd-dashboard-link-secondary">API Docs</a>
       </div>
     </div>
   `;

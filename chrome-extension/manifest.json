@@ -12,6 +12,7 @@
   ],
   "host_permissions": [
     "http://localhost:8000/*",
+    "https://truthlens-ai-1fwt.onrender.com/*",
     "https://www.googleapis.com/*",
     "https://oauth2.googleapis.com/*",
     "https://accounts.google.com/*"

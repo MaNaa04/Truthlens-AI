@@ -23,10 +23,10 @@ class Settings(BaseSettings):
     port: int = 8000
     
     # LLM Configuration
-    llm_provider: str = "gemini"  # "gemini", "openai", "groq", "grok", or "anthropic"
+    llm_provider: str = "groq"  # "groq", "gemini", "openai", "grok", or "anthropic"
     llm_api_key: str = ""
     grok_api_key: str = ""
-    llm_model: str = "gemini-2.0-flash"  # or "gpt-4", "gpt-3.5-turbo"
+    llm_model: str = "llama-3.3-70b-versatile"  # groq default; for gemini: "gemini-2.0-flash"
     llm_api_base: str = ""
     
     # External API Keys

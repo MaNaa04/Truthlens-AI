@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://truthlens-ai-1fwt.onrender.com";
 const API_VERIFY_URL = `${API_BASE}/api/verify`;
 const API_AUTH_URL = `${API_BASE}/api/auth/google-login`;
 
@@ -268,7 +268,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       const data = await res.json();
       showResult(data);
     } catch (err) {
-      showError("Cannot reach backend. Make sure the server is running at localhost:8000");
+      showError("Cannot reach backend. The server may be waking up (cold start) — please wait 30 seconds and try again.");
+
     } finally {
       verifyBtn.disabled = false;
       loader.style.display = "none";
